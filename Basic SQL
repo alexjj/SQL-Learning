@@ -220,3 +220,107 @@ GROUP BY sex;
 SELECT SUM(total_sales), client_id
 FROM works_with
 GROUP BY client_id;
+
+SELECT SUM(total_sales), client_id
+FROM works_with
+GROUP BY client_id;
+
+-- find any client's who are an LLC
+select *
+from client
+where client_name like '%LLC';
+
+-- find any branch suppliers who are in the label business
+select *
+from branch_supplier
+where supplier_name like '%Label%';
+
+-- find any employee born in october
+select *
+from employee
+where birth_day like '____-10-__';
+
+-- any clients that are schools
+select *
+from client
+where client_name like '%school%';
+
+-- unions
+-- find list of employee and branch names
+
+select first_name as name
+from employee
+union
+select branch_name
+from branch
+union
+select client_name
+from client;
+
+-- find the list of all clients and branch suppliers names
+select client_name, client.branch_id
+from client
+union
+select branch_supplier.supplier_name, branch_supplier.branch_id
+from branch_supplier;
+
+-- find a list of all money spent or earned by company (earnings and salaries)
+select salary as money
+from employee
+union
+select total_sales
+from works_with;
+
+-- joins
+insert into branch values(4, 'Buffalo', null, null);
+
+-- find all branches and the names of their managers
+SELECT employee.emp_id, employee.first_name, branch.branch_name
+FROM employee
+JOIN branch
+ON employee.emp_id = branch.mgr_id;
+
+-- Nested queries
+
+-- find names of all employees who have sold over $30k to single client
+SELECT employee.first_name, employee.last_name
+FROM employee
+WHERE employee.emp_id IN (
+	SELECT works_with.emp_id
+	FROM works_with
+	WHERE works_with.total_sales > 30000
+);
+
+-- find all clients who are handled by the branch that michael scott manages, based on his id
+
+SELECT client.client_name
+FROM client
+WHERE client.branch_id = (
+	SELECT branch.branch_id
+	FROM branch
+	WHERE branch.mgr_id = 102
+	LIMIT 1
+);
+
+-- On delete
+DELETE FROM employee
+WHERE emp_id = 102;
+-- on delete set null
+SELECT * FROM branch;
+SELECT * FROM employee;
+
+DELETE FROM branch
+WHERE branch_id = 2;
+
+-- on delete cascade
+SELECT * FROM branch_supplier;
+
+
+-- Triggers
+CREATE TABLE trigger_test (
+	message VARCHARACTER(100));
+
+INSERT INTO employee
+VALUES(109, 'Oscar', 'Martinez', '1968-02-19', 'M', 69000, 106, 3);
+
+SELECT * FROM trigger_test;
